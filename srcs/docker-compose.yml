@@ -1,0 +1,122 @@
+# ---------------------------------------------------------------------------- #
+# Inception — docker-compose                                                    #
+#                                                                              #
+# Compose project name (containers: nginx/wordpress/mariadb,                   #
+# images: inception-<service>).                                                #
+# ---------------------------------------------------------------------------- #
+name: inception
+
+# ---------------------------------------------------------------------------- #
+# Secrets: single-value files mounted read-only at /run/secrets/<name> inside  #
+# the containers. Paths are relative to this file (srcs/).                     #
+# ---------------------------------------------------------------------------- #
+secrets:
+  db_root_password:
+    file: ../secrets/db_root_password.txt
+  db_password:
+    file: ../secrets/db_password.txt
+  wp_admin_password:
+    file: ../secrets/credentials.txt
+  wp_user_password:
+    file: ../secrets/wp_user_password.txt
+
+# ---------------------------------------------------------------------------- #
+# Network: dedicated bridge network. network: host / --link / links: are       #
+# forbidden by the subject.                                                    #
+# ---------------------------------------------------------------------------- #
+networks:
+  inception:
+    name: inception
+    driver: bridge
+
+# ---------------------------------------------------------------------------- #
+# Named volumes (bind mounts are forbidden for these two).                     #
+# The local driver keeps the data in /home/login/data on the host machine.     #
+# ---------------------------------------------------------------------------- #
+volumes:
+  mariadb_data:
+    name: mariadb_data
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: /home/login/data/mariadb
+  wordpress_data:
+    name: wordpress_data
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: /home/login/data/wordpress
+
+services:
+
+  # -------------------------------------------------------------------------- #
+  # MariaDB — database server (port 3306, internal network only)               #
+  # -------------------------------------------------------------------------- #
+  mariadb:
+    container_name: mariadb
+    image: mariadb:inception
+    build:
+      context: ./requirements/mariadb
+    env_file: .env
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+      MYSQL_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - db_root_password
+      - db_password
+    networks:
+      - inception
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    expose:
+      - "3306"
+    restart: always
+
+  # -------------------------------------------------------------------------- #
+  # WordPress + php-fpm (port 9000, internal network only)                     #
+  # -------------------------------------------------------------------------- #
+  wordpress:
+    container_name: wordpress
+    image: wordpress:inception
+    build:
+      context: ./requirements/wordpress
+    env_file: .env
+    environment:
+      MYSQL_PASSWORD_FILE: /run/secrets/db_password
+      WP_ADMIN_PASSWORD_FILE: /run/secrets/wp_admin_password
+      WP_USER_PASSWORD_FILE: /run/secrets/wp_user_password
+    secrets:
+      - db_password
+      - wp_admin_password
+      - wp_user_password
+    networks:
+      - inception
+    volumes:
+      - wordpress_data:/var/www/html
+    expose:
+      - "9000"
+    depends_on:
+      - mariadb
+    restart: always
+
+  # -------------------------------------------------------------------------- #
+  # NGINX — the only entry point of the infrastructure, port 443 only,         #
+  # TLSv1.2 / TLSv1.3 only.                                                    #
+  # -------------------------------------------------------------------------- #
+  nginx:
+    container_name: nginx
+    image: nginx:inception
+    build:
+      context: ./requirements/nginx
+    env_file: .env
+    networks:
+      - inception
+    ports:
+      - "443:443"
+    volumes:
+      - wordpress_data:/var/www/html:ro
+    depends_on:
+      - wordpress
+    restart: always

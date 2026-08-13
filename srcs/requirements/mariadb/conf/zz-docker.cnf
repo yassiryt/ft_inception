@@ -1,0 +1,16 @@
+# ---------------------------------------------------------------------------- #
+# MariaDB server overrides.                                                    #
+#                                                                              #
+# Named with a "zz" prefix so it is the last file parsed in /etc/my.cnf.d:     #
+# the stock mariadb-server.cnf shipped by Alpine sets "skip-networking",       #
+# which would make the server unreachable from the other containers.          #
+# ---------------------------------------------------------------------------- #
+
+[mysqld]
+skip-networking = 0
+bind-address = 0.0.0.0
+port = 3306
+datadir = /var/lib/mysql
+socket = /run/mysqld/mysqld.sock
+pid-file = /run/mysqld/mysqld.pid
+user = mysql
