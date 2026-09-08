@@ -4,8 +4,8 @@ Step-by-step plan, from an empty VM to a working WordPress site.
 Follow the steps in order. Commands run in a terminal.
 
 > Placeholder: this guide uses `login` for the intra username. Replace it
-> with YOUR username everywhere (`login.42.fr` → `you.42.fr`,
-> `/home/login/data` → `/home/you/data`).
+> with YOUR username everywhere (`yatanagh.42.fr` → `you.42.fr`,
+> `/home/yatanagh/data` → `/home/you/data`).
 
 ---
 
@@ -50,15 +50,15 @@ cd inception
 The project ships with the placeholder `login`. Replace it in exactly these
 places:
 
-1. `srcs/.env` → `DOMAIN_NAME=login.42.fr` becomes `you.42.fr` (and the two
+1. `srcs/.env` → `DOMAIN_NAME=yatanagh.42.fr` becomes `you.42.fr` (and the two
    WordPress email addresses if you like).
-2. `Makefile` → `DATA_DIR = /home/login/data` becomes `/home/you/data`.
+2. `Makefile` → `DATA_DIR = /home/yatanagh/data` becomes `/home/you/data`.
 3. `srcs/docker-compose.yml` → the two `device:` lines under `volumes:`
    become `/home/you/data/mariadb` and `/home/you/data/wordpress`.
 
 ```sh
 # quick way (check the result afterwards!)
-sed -i 's|/home/login/data|/home/you/data|g' Makefile srcs/docker-compose.yml
+sed -i 's|/home/yatanagh/data|/home/you/data|g' Makefile srcs/docker-compose.yml
 sed -i 's|login\.42\.fr|you.42.fr|g' srcs/.env
 ```
 

@@ -40,14 +40,14 @@ volumes:
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: /home/login/data/mariadb
+      device: /goinfre/${USER}/data/mariadb
   wordpress_data:
     name: wordpress_data
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: /home/login/data/wordpress
+      device: /goinfre/${USER}/data/wordpress
 
 services:
 

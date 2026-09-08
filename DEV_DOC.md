@@ -26,7 +26,7 @@ Key rules implemented (subject v5.3):
 - only nginx exposes a port on the host: `443`;
 - dedicated bridge network `inception` (`network: host`, `--link`, `links:`
   are forbidden);
-- two named volumes whose data lives in `/home/login/data`;
+- two named volumes whose data lives in `/home/yatanagh/data`;
 - `restart: always` on every service;
 - services run as PID 1 via `exec` (`mariadbd`, `php-fpm83 -F`,
   `nginx -g "daemon off;"`) — no `tail -f` / `sleep infinity` / `while true`;
@@ -49,7 +49,7 @@ One-time system configuration:
 1. Edit `/etc/hosts` so the domain points to your local IP:
 
    ```
-   127.0.0.1   login.42.fr
+   127.0.0.1   yatanagh.42.fr
    ```
 
 2. Fill the four files in `secrets/` (one password per file, see
@@ -67,7 +67,7 @@ make            # = docker compose -f srcs/docker-compose.yml up -d --build
 
 What happens on the very first `make`:
 
-1. `mkdir -p /home/login/data/{mariadb,wordpress}` (host directories used by
+1. `mkdir -p /home/yatanagh/data/{mariadb,wordpress}` (host directories used by
    the volumes).
 2. Compose builds the three images from `srcs/requirements/*/Dockerfile`.
 3. Containers start; each entrypoint performs its first-boot job:
@@ -110,9 +110,9 @@ make re
 
 ## 5. Where the data is stored and how it persists
 
-- **Database files**: host directory `/home/login/data/mariadb`, mounted at
+- **Database files**: host directory `/home/yatanagh/data/mariadb`, mounted at
   `/var/lib/mysql` in the mariadb container.
-- **Website files**: host directory `/home/login/data/wordpress`, mounted at
+- **Website files**: host directory `/home/yatanagh/data/wordpress`, mounted at
   `/var/www/html` in the wordpress container (nginx mounts the same volume
   read-only).
 
@@ -124,8 +124,8 @@ Persistence semantics:
   data preserved; the entrypoints detect an already-initialized volume
   (`/var/lib/mysql/mysql` exists, `wp-config.php` exists) and skip setup.
 - `make clean` → volumes deleted: database and website files gone.
-- `make fclean` → additionally removes images and `/home/login/data`.
-- Copying the `/home/login/data` directory is a full backup of the site.
+- `make fclean` → additionally removes images and `/home/yatanagh/data`.
+- Copying the `/home/yatanagh/data` directory is a full backup of the site.
 
 ## 6. Debugging
 
@@ -135,7 +135,7 @@ docker logs wordpress                      # first-boot logs of wordpress
 docker logs mariadb                        # init SQL errors land here
 docker exec wordpress sh -c 'wp core version --path=/var/www/html --allow-root'
 docker exec mariadb mariadb -u wpdbuser -p... wordpress_db -e 'SHOW TABLES;'
-curl -vk https://login.42.fr               # TLS + fastcgi round trip
+curl -vk https://yatanagh.42.fr               # TLS + fastcgi round trip
 ```
 
 Common issues:

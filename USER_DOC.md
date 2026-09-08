@@ -18,10 +18,10 @@ All communication happens over a private Docker network called `inception`.
 From outside, only port **443** is reachable, with **TLSv1.2 or TLSv1.3**.
 
 Two persistent storages (named Docker volumes) keep the data on the host
-machine inside `/home/login/data`:
+machine inside `/home/yatanagh/data`:
 
-- `/home/login/data/mariadb` → the database files;
-- `/home/login/data/wordpress` → the website files.
+- `/home/yatanagh/data/mariadb` → the database files;
+- `/home/yatanagh/data/wordpress` → the website files.
 
 ## 2. Starting and stopping the project
 
@@ -36,7 +36,7 @@ All commands run from the project root (where the `Makefile` is).
 | `make restart`| Restart the containers.                                             |
 | `make down`   | Stop and remove the containers. Data (volumes) is preserved.        |
 | `make clean`  | `down` + **delete** the volumes → database and site are wiped.      |
-| `make fclean` | `clean` + delete the images and `/home/login/data`. Full reset.     |
+| `make fclean` | `clean` + delete the images and `/home/yatanagh/data`. Full reset.     |
 | `make re`     | Full reset and rebuild from scratch.                                |
 
 If a container crashes, Docker restarts it automatically
@@ -52,24 +52,24 @@ If a container crashes, Docker restarts it automatically
    must be present in `/etc/hosts`:
 
    ```
-   127.0.0.1   login.42.fr
+   127.0.0.1   yatanagh.42.fr
    ```
 
    (Replace `login` with your intra username — see SETUP_GUIDE.md.)
 
-2. Open **https://login.42.fr** in a browser.
+2. Open **https://yatanagh.42.fr** in a browser.
 
 3. The certificate is **self-signed**, so the browser will show a security
    warning: accept it / click “Advanced → Proceed”. With curl use:
 
    ```sh
-   curl -k https://login.42.fr
+   curl -k https://yatanagh.42.fr
    ```
 
 4. Administration panel (WordPress dashboard):
 
    ```
-   https://login.42.fr/wp-admin/
+   https://yatanagh.42.fr/wp-admin/
    ```
 
    Log in with the **administrator** account (see below).
@@ -122,7 +122,7 @@ make ps                       # list the containers and their status
 make logs                     # follow the logs of all services
 
 # Website answers over HTTPS?
-curl -k -I https://login.42.fr
+curl -k -I https://yatanagh.42.fr
 
 # TLS version check
 echo | openssl s_client -connect localhost:443 -tls1_2 2>/dev/null | grep -m1 "Protocol"

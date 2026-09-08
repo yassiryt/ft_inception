@@ -6,7 +6,7 @@
 
 COMPOSE       = docker compose
 COMPOSE_FILE  = srcs/docker-compose.yml
-DATA_DIR      = /home/login/data
+DATA_DIR      = /goinfre/$(USER)/data
 
 GREEN         = \033[0;32m
 RED           = \033[0;31m
@@ -28,7 +28,7 @@ build:
 
 up: dirs
 	$(COMPOSE) -f $(COMPOSE_FILE) up -d --build
-	@echo "$(GREEN)[OK] Inception is up. Browse to https://login.42.fr$(RESET)"
+	@echo "$(GREEN)[OK] Inception is up. Browse to https://yatanagh.42.fr$(RESET)"
 
 down:
 	$(COMPOSE) -f $(COMPOSE_FILE) down
