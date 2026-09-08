@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by login.*
+*This project has been created as part of the 42 curriculum by yatanagh.*
 
 # Inception
 
@@ -12,7 +12,7 @@ running in its own dedicated container:
 ```
                     Internet
                        |
-                 https://login.42.fr (443, TLS 1.2 / 1.3)
+                 https://yatanagh.42.fr (443, TLS 1.2 / 1.3)
                        |
                  ┌───────────┐
                  │   NGINX   │  reverse proxy / TLS endpoint
@@ -26,9 +26,9 @@ running in its own dedicated container:
                  │  MARIADB   │  database server (no nginx inside)
                  └────────────┘
 
-Volumes (named, data stored in /home/login/data on the host):
-  wordpress_data -> website files   (/home/login/data/wordpress)
-  mariadb_data   -> database files  (/home/login/data/mariadb)
+Volumes (named, data stored in /home/yatanagh/data on the host):
+  wordpress_data -> website files   (/home/yatanagh/data/wordpress)
+  mariadb_data   -> database files  (/home/yatanagh/data/mariadb)
 ```
 
 Every image is built from the penultimate stable version of Alpine Linux
@@ -46,7 +46,7 @@ runtime configuration. In this project Docker is used to:
 
 - build the three images from scratch (`Dockerfile` per service);
 - link the containers through a dedicated bridge network (`inception`);
-- persist data through named volumes mapped to `/home/login/data`;
+- persist data through named volumes mapped to `/home/yatanagh/data`;
 - guarantee the services restart automatically after a crash
   (`restart: always`);
 - inject credentials at runtime through **Docker secrets**, so no password
@@ -130,7 +130,7 @@ A **bind mount** mounts an arbitrary host path into the container
 not manage it — which the subject forbids for the two persistent storages.
 A **named volume** is an object managed by Docker (`docker volume`). Here the
 volumes use the `local` driver with a custom `device` option so their data
-physically lives in `/home/login/data` while remaining Docker-managed named
+physically lives in `/home/yatanagh/data` while remaining Docker-managed named
 volumes: `docker volume ls` shows `mariadb_data` and `wordpress_data`, exactly
 as the subject requires.
 
@@ -153,13 +153,13 @@ make stop   # stop (data preserved)
 make start  # start again
 make down   # stop and remove containers (data preserved)
 make clean  # down + DELETE the volumes (database and website files)
-make fclean # clean + delete images and /home/login/data
+make fclean # clean + delete images and /home/yatanagh/data
 make re     # full rebuild from scratch
 ```
 
-Browse to `https://login.42.fr` (self-signed certificate: accept the warning,
-or use `curl -k https://login.42.fr`). Admin panel:
-`https://login.42.fr/wp-admin/`.
+Browse to `https://yatanagh.42.fr` (self-signed certificate: accept the warning,
+or use `curl -k https://yatanagh.42.fr`). Admin panel:
+`https://yatanagh.42.fr/wp-admin/`.
 
 ## Resources
 
@@ -196,3 +196,4 @@ Every configuration file and script was read, tested and validated by hand;
 no generated block was accepted without being understood and verified against
 the official docs.
 # ft_inception
+# ft_inception_test
